@@ -1,0 +1,42 @@
+*** Settings ***
+Library           SeleniumLibrary
+
+*** Variables ***
+${text}           ${EMPTY}
+
+*** Keywords ***
+login
+    Open browser    https://ngendigital.com/demo-application    Chrome
+    Element Text Should Be    xpath://span[contains(text(),'Login to Flight Application')]    Login to Flight Application
+    Maximize Browser Window
+
+objectsonpage
+    Element Should Contain    //div[@class='box']//h1    My Account
+    Page Should Contain Element    //input[@name='email']
+    Page Should Contain Element    //input[@name='passwd']
+
+iframes
+    Select Frame    xpath://iframe[@id='iframe-09']
+
+Emptyusername
+    Wait Until Keyword Succeeds    2    1    Clear Element Text    //input[@name='email']
+    Wait Until Keyword Succeeds    2    1    Input Text    //input[@name='passwd']    123
+    Wait Until Keyword Succeeds    2    1    Click Element    //div[@name='SignIn']
+    ${text}    Get Text    xpath://font[@color='red']
+    Run Keyword If    '${text}'=='Please enter username'    Log    ${text}
+
+Managebooking
+    Set Selenium Speed    0.5
+    Wait Until Keyword Succeeds    2    1    Clear Element Text    //input[@name='email']
+    Wait Until Keyword Succeeds    2    1    Input Text    //input[@name='email']    support@ngendigital.com
+    Wait Until Keyword Succeeds    2    1    Input Text    //input[@name='passwd']    abc123
+    Wait Until Keyword Succeeds    2    1    Click Element    //div[@name='SignIn']
+    Select Frame    xpath://iframe[@id='iframe-09']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain Element    xpath://button[@name='Booking']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain List    xpath://select[@id='FromCity']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain List    xpath://select[@id='ToCity']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain Element    xpath://input[@id='goDate']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain Element    xpath://input[@id='returnDate']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain List    xpath://select[@id='Class']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain Radio Button    xpath://input[@name='flight']
+    Wait Until Keyword Succeeds    2    1    Page Should Contain Element    xpath://button[contains(text(),'Get Fare')]
